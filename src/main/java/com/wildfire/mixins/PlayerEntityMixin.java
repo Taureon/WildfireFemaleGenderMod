@@ -67,8 +67,18 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
         aPlr.getLeftBreastPhysics().update(plr, armor);
         aPlr.getRightBreastPhysics().update(plr, armor);
-
-
     }
 
+    @Inject(at = @At("HEAD"), method = "mobInteract")
+    public InteractionResult mobInteract(Player var1, InteractionHand var2) {
+        ItemStack var3 = var1.getItemInHand(var2);
+        if (var3.is(Items.BUCKET) && !this.isBaby()) {
+            var1.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
+            ItemStack var4 = ItemUtils.createFilledResult(var3, var1, Items.MILK_BUCKET.getDefaultInstance());
+            var1.setItemInHand(var2, var4);
+            return InteractionResult.sidedSuccess(this.level.isClientSide);
+        } else {
+            return super.mobInteract(var1, var2);
+        }
+    }
 }
